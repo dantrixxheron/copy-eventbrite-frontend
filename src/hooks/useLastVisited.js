@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-const KEY = 'quickpass-last-path'
+const KEY = 'passpro-last-path'
 
 export default function useLastVisited() {
   const setLastPath = useCallback((path) => {

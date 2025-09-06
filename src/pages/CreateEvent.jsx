@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Card from '../components/Card'
 import { createEvent } from '../services/api'
+import {z } from 'zod'
+import { eventSchema } from '../schema/eventSchema'
 
 export default function CreateEvent() {
     const [form, setForm] = useState({
@@ -31,13 +33,18 @@ export default function CreateEvent() {
         e.preventDefault()
         setLoading(true); setError(null); setOk(null)
         try {
-        const payload = { ...form, date: new Date(form.date).toISOString() }
-        const res = await createEvent(payload)
-        setOk(`Evento creado: ${res?.item?.title} (${res?.item?._id})`)
-        } catch (e2) {
-        setError(e2.message)
-        } finally {
-        setLoading(false)
+            eventSchema.parse(form)
+            const payload = { ...form, date: new Date(form.date).toISOString() }
+            const res = await createEvent(payload)
+            setOk(`Evento creado: ${res?.item?.title} (${res?.item?._id})`)
+            } catch (e2) {
+              if (e2 instanceof z.ZodError) {
+                setError(e2.errors[0]?.message || 'Datos inválidos en el formulario')
+              } else {
+                setError('Error creando el evento. Intenta de nuevo.')
+              }
+            } finally {
+            setLoading(false)
         }
     }
 

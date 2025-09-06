@@ -1,5 +1,5 @@
-import { create } from 'zustand' //ayuda a crear estados globales
-import { persist } from 'zustand/middleware' //permite persistir el estado en cookies
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import * as api from '../services/api'
 
 const useAuth = create(
@@ -31,7 +31,6 @@ const useAuth = create(
 
       logout: () => set({ token: null, refreshToken: null, user: null }),
     }),
-    //configuracion de persistencia en cookies
     {
       name: 'passpro-auth',
       partialize: (s) => ({ token: s.token, refreshToken: s.refreshToken, user: s.user })

@@ -30,12 +30,20 @@ export async function createEvent(payload) {
     return data
 }
 
-export async function purchaseTicket({eventId, set}) {
-    const { data } = await http.post('/tickets/purchase',{eventId, set})
+export async function purchaseTicket({eventId, seat}) {
+    const { data } = await http.post('/tickets/purchase',{eventId, seat})
     return data
 }
 
 export async function scanTicket({token}) {
     const { data } = await http.post('/checkin/scan',{token})
     return data
+}
+export async function getOccupiedSeats(eventId) {
+  try {
+    const { data } = await http.get(`/events/${eventId}/occupied`)
+    return data
+  } catch {
+    return { occupied: [] }
+  }
 }

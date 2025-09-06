@@ -25,7 +25,7 @@ export default function CreateEvent() {
         const key = name.split('.')[1]
         setForm((f) => ({ ...f, seatMap: { ...f.seatMap, [key]: key === 'type' ? value : Number(value) } }))
         } else {
-        setForm((f) => ({ ...f, [name]: type === 'checkbox' ? checked : value }))
+        setForm((f) => ({ ...f, [name]: type === 'checkbox' ? checked : type === 'number' ? Number(value) : value }))
         }
     }
 
@@ -38,10 +38,10 @@ export default function CreateEvent() {
             const res = await createEvent(payload)
             setOk(`Evento creado: ${res?.item?.title} (${res?.item?._id})`)
             } catch (e2) {
-              if (e2 instanceof z.ZodError) {
-                setError(e2.errors[0]?.message || 'Datos inválidos en el formulario')
+              if (typeof e2 === 'object' && e2 !== null && 'errors' in e2) {
+                setError(e2.errors?.[0]?.message || 'Datos inválidos en el formulario')
               } else {
-                setError('Error creando el evento. Intenta de nuevo.')
+                setError(e2.message || 'Error creando el evento. Intenta de nuevo.')
               }
             } finally {
             setLoading(false)

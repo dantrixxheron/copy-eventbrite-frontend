@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import useAuth from '../hooks/useAuth'
+import { z } from 'zod'
+import { userSchema } from '../schema/userSchema'
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: '' })
@@ -17,9 +19,16 @@ export default function Register() {
     e.preventDefault()
     setLoading(true); setError(null)
     try {
+      userSchema.parse(form)
       await register(form)
       navigate('/events', { replace: true })
-    } catch (err) { setError(err.message) }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setError(err.errors[0]?.message || 'Datos inválidos')
+      } else {
+        setError('Error de registro. Revisa tus datos e intenta de nuevo.')
+      }
+    }
     finally { setLoading(false) }
   }
 
